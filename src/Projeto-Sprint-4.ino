@@ -16,7 +16,7 @@ String mensagem;
 String ip;
 
 // Função de inicialização
-void configurar()
+void setup()
 {
   lcd.begin();
   lcd.noBacklight();
