@@ -1,7 +1,7 @@
 #include "UbidotsEsp32Mqtt.h"
 #include <LiquidCrystal_I2C.h>
 
-const char *UBIDOTS_TOKEN = "BBFF-QNF90wgdLx3HtT1qmU1usUzgiqjR0F";  // Coloque aqui o seu TOKEN do Ubidots
+const char *UBIDOTS_TOKEN = "TOKEN";  // Coloque aqui o seu TOKEN do Ubidots
 
 const char *WIFI_SSID = "SSID";  // Coloque aqui o SSID da sua rede Wi-Fi
 
