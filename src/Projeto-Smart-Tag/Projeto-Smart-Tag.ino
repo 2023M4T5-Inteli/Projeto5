@@ -123,7 +123,6 @@ void exibirMensagemConexao()
     contadorExibicao++;
   }
 
-}
 // Quando o ESP32 estiver conectado ao Wi-Fi e ainda não estiver subscrevendo ou publicando em tópicos MQTT, este código vai rodar
   lcd.clear();
   lcd.print("Conectado a");
