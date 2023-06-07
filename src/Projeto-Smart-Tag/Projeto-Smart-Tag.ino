@@ -1,9 +1,9 @@
 #include "UbidotsEsp32Mqtt.h"
 #include <LiquidCrystal_I2C.h>
 
-const char *UBIDOTS_TOKEN = "TOKEN";  // Insira aqui o seu TOKEN do Ubidots
-const char *WIFI_SSID = "SSID";  // Insira aqui o SSID da sua rede Wi-Fi
-const char *WIFI_PASS = "SENHA";  // Insira aqui a senha da sua rede Wi-Fi
+const char *UBIDOTS_TOKEN = "BBFF-QNF90wgdLx3HtT1qmU1usUzgiqjR0F";  // Insira aqui o seu TOKEN do Ubidots
+const char *WIFI_SSID = "Inteli-COLLEGE";  // Insira aqui o SSID da sua rede Wi-Fi
+const char *WIFI_PASS = "QazWsx@123";  // Insira aqui a senha da sua rede Wi-Fi
 const char *DEVICE_LABEL = "esp-vitor";  // Insira aqui o Label do seu dispositivo para o qual os dados serão publicados
 const char *varSinalWifi = "sinal-wifi";  // Insira aqui o Label da variável para a qual os dados serão publicados
 const char *varLedUbidots = "variavel";  // Substitua pelo Label da variável à qual deseja se inscrever
@@ -130,7 +130,7 @@ void exibirMensagemConexao()
   lcd.print("rede Wifi");
   delay(3000);
   lcd.clear();
-  lcd.print("IP do ESP local: ");
+  lcd.print("IP do WiFi: ");
   lcd.setCursor(0, 1);
   lcd.print(WiFi.localIP());
   delay(3000);
