@@ -1,137 +1,150 @@
 #include "UbidotsEsp32Mqtt.h"
-#include <LiquidCrystal_I2C.h>
+#include "SSD1306Wire.h"
 
-const char *UBIDOTS_TOKEN = "BBFF-QNF90wgdLx3HtT1qmU1usUzgiqjR0F";  // Insira aqui o seu TOKEN do Ubidots
-const char *WIFI_SSID = "Inteli-COLLEGE";  // Insira aqui o SSID da sua rede Wi-Fi
-const char *WIFI_PASS = "QazWsx@123";  // Insira aqui a senha da sua rede Wi-Fi
-const char *DEVICE_LABEL = "esp-vitor";  // Insira aqui o Label do seu dispositivo para o qual os dados serão publicados
-const char *varSinalWifi = "sinal-wifi";  // Insira aqui o Label da variável para a qual os dados serão publicados
-const char *varLedUbidots = "variavel";  // Substitua pelo Label da variável à qual deseja se inscrever
-const int FREQUENCIA_PUBLICACAO = 2000;  // Taxa de atualização em milissegundos
+// Configuração do Ubidots
+const char *UBIDOTS_TOKEN = "TOKEN-UBIDOTS"; // Insira aqui o seu TOKEN do Ubidots
+const char *DEVICE_LABEL = "LABEL-DISPOSITIVO"; // Insira aqui o Label do seu dispositivo para o qual os dados serão publicados
+const char *varSinalWifi = "VARIAVEL-SINAL"; // Insira aqui o Label da variável para a qual os dados serão publicados
+const char *varLedUbidots = "VARIAVEL-LED"; // Substitua pelo Label da variável à qual deseja se inscrever
+const int FREQUENCIA_PUBLICACAO = 2000; // Taxa de atualização em milissegundos
 
-const uint8_t portaLedMQTT = 5;  // Pino usado para gravar dados com base em 1 e 0 provenientes de Ubidots
+// Configuração da rede Wi-Fi
+const char *WIFI_SSID = "SSID"; // Insira aqui o SSID da sua rede Wi-Fi
+const char *WIFI_PASS = "SENHA"; // Insira aqui a senha da sua rede Wi-Fi
 
-// Variáveis de controle de tempo, contador e estado
-unsigned long timer;
-int contadorExibicao = 3;
-bool ledLigado = false;
+// Configuração dos pinos
+const uint8_t portaLedMQTT = 5; // Pino usado para gravar dados com base em 1 e 0 provenientes de Ubidots
+const uint8_t ledSinalRuim = 27;
+const uint8_t ledConectado = 14;
 
+// Configuração do display OLED
+SSD1306Wire display(0x3c, 4, 15);
 
-LiquidCrystal_I2C lcd(0x27, 16, 2);  // Declaração do objeto LCD
-Ubidots ubidots(UBIDOTS_TOKEN);  // Declaração do objeto Ubidots com o TOKEN que foi inserido na variável UBIDOTS_TOKEN
+// Outras variáveis globais
+bool ligado = false;
+String local;
 
+LiquidCrystal_I2C lcd(0x27, 16, 2); // Declaração do objeto LCD
+Ubidots ubidots(UBIDOTS_TOKEN); // Declaração do objeto Ubidots com o TOKEN que foi inserido na variável UBIDOTS_TOKEN
 
 // Função de callback para tratamento de mensagens MQTT recebidas
 void mqttCallback(char *topic, byte *payload, unsigned int length)
 {
-  Serial.print("Message arrived [");
-  Serial.print(topic);
-  Serial.println("] ");
-
-  for (int i = 0; i < length; i++) {
-    Serial.print((char)payload[i]);
-
-    if ((char)payload[0] == '1') {
-      ledLigado = true;
-      digitalWrite(portaLedMQTT, HIGH);
-    } else {
-      ledLigado = false;
-      digitalWrite(portaLedMQTT, LOW);
-    }
-  }
-
-  Serial.println();
+  // Implemente o tratamento de mensagens MQTT recebidas
 }
 
-// Função de configuração inicial
+// Função para realizar a configuração inicial
 void setup()
 {
   Serial.begin(115200);
+
   pinMode(portaLedMQTT, OUTPUT);
+  pinMode(ledSinalRuim, OUTPUT);
+  pinMode(ledConectado, OUTPUT);
 
-  lcd.begin();
-  lcd.backlight();
+  // Configuração inicial do display OLED
+  display.init();
+  display.drawString(0, 0, "");
+  display.drawString(0, 20, "");
+  display.drawString(0, 40, "");
+  display.display();
 
+  // Conexão à rede Wi-Fi
   WiFi.begin(WIFI_SSID, WIFI_PASS);
-
-  exibirMensagemConexao();
-
-  Serial.println();
-  Serial.print("Conectado ao Wifi, IP: ");
+  while (WiFi.status() != WL_CONNECTED)
+  {
+    delay(1000);
+    Serial.println("Conectando");
+  }
+  Serial.print("Conectado à rede Wi-Fi. Endereço IP: ");
   Serial.println(WiFi.localIP());
 
+  // Identificação do local
+  if (WiFi.localIP().toString() == COLLEGE)
+  {
+    local = "COLLEGE";
+    Serial.println("Seu " + String(DEVICE_LABEL) + " está no: " + local);
+  }
+  else if (WiFi.localIP().toString() == WELCOME)
+  {
+    local = "WELCOME";
+    Serial.println("Seu " + String(DEVICE_LABEL) + " está no: " + local);
+  }
+  else
+  {
+    local = "PERDIDO";
+    Serial.println();
+  }
+
+  // Configuração do Ubidots
   ubidots.setCallback(mqttCallback);
-
   ubidots.setup();
-
   ubidots.reconnect();
+  ubidots.subscribeLastValue(DEVICE_LABEL, varLedUbidots);
 
-  ubidots.subscribeLastValue(DEVICE_LABEL, varLedUbidots);  // Inserir os Labels do dispositivo e da variável, respectivamente
+  // Inicialização do timer
   timer = millis();
 }
 
 // Função principal executada continuamente
-void loop() {
-  if (!ubidots.connected() && ledLigado == true) {
+void loop()
+{
+  if (!ubidots.connected() && ligado)
+  {
     ubidots.reconnect();
-    ubidots.subscribeLastValue(DEVICE_LABEL, varLedUbidots);  // Inserir os Labels do dispositivo e da variável, respectivamente
+    ubidots.subscribeLastValue(DEVICE_LABEL, varLedUbidots);
   }
 
-  if (ledLigado) {
-    if (abs(millis() - timer) > FREQUENCIA_PUBLICACAO) {
+  if (ligado)
+  {
+    if (abs(millis() - timer) > FREQUENCIA_PUBLICACAO)
+    {
       ubidots.reconnect();
       long value = WiFi.RSSI() + 100;
-      ubidots.add(varSinalWifi, value);  // Inserir Labels de variáveis e o valor a ser enviado
+      ubidots.add(varSinalWifi, value);
       ubidots.publish(DEVICE_LABEL);
 
       Serial.println(value);
+      display.display();
+      display.drawString(0, 20, "Local Atual: " + local);
 
-      lcd.clear();
-      lcd.print("Sinal do Wifi:");
-      lcd.setCursor(1, 1);
-      lcd.print(value);
+      if (local == localAdequado)
+      {
+        display.drawString(0, 40, "Status OK!");
+      }
+      else
+      {
+        display.drawString(0, 40, "Alerta!");
+      }
 
       timer = millis();
 
       ubidots.loop();
+      if (value <= 30)
+      {
+        alerta = true;
+      }
+      else
+      {
+        alerta = false;
+      }
+      if (alerta)
+      {
+        digitalWrite(ledSinalRuim, HIGH);
+      }
+      else
+      {
+        digitalWrite(ledSinalRuim, LOW);
+      }
     }
-  } else {
-    ubidots.add(varSinalWifi, 0);  // Inserir Labels de variáveis e o valor a ser enviado
+  }
+  else
+  {
+    ubidots.add(varSinalWifi, 0);
     ubidots.publish(DEVICE_LABEL);
 
-    exibirMensagemConexao();
     timer = millis();
-
+    digitalWrite(alerta, LOW);
     ubidots.loop();
   }
-}
-
-// Função para exibir mensagens durante o processo de conexão Wi-Fi
-void exibirMensagemConexao()
-{
-//Enquanto o Wi-Fi não estiver conectado, este trecho de código vai rodar
-  while (WiFi.status() != WL_CONNECTED)
-  {
-    if (contadorExibicao == 3)
-    {
-      lcd.clear();
-      lcd.print("Conectando");
-      contadorExibicao = 0;
-    }
-    lcd.print(".");
-    delay(500);
-    contadorExibicao++;
-  }
-
-// Quando o ESP32 estiver conectado ao Wi-Fi e ainda não estiver subscrevendo ou publicando em tópicos MQTT, este código vai rodar
-  lcd.clear();
-  lcd.print("Conectado a");
-  lcd.setCursor(0, 1);
-  lcd.print("rede Wifi");
-  delay(3000);
-  lcd.clear();
-  lcd.print("IP do WiFi: ");
-  lcd.setCursor(0, 1);
-  lcd.print(WiFi.localIP());
-  delay(3000);
 }
