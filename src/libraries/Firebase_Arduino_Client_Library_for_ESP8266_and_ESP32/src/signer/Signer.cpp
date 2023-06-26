@@ -1,5 +1,5 @@
 #include "Firebase_Client_Version.h"
-#if !FIREBASE_CLIENT_VERSION_CHECK(40311)
+#if !FIREBASE_CLIENT_VERSION_CHECK(40314)
 #error "Mixed versions compilation."
 #endif
 
@@ -8,7 +8,7 @@
  *
  * This library supports Espressif ESP8266, ESP32 and Raspberry Pi Pico
  *
- * Created June 7, 2023
+ * Created June 14, 2023
  *
  * This work is a part of Firebase ESP Client library
  * Copyright (c) 2023 K. Suwatchai (Mobizt)
@@ -634,7 +634,7 @@ void Firebase_Signer::tokenProcessingTask()
                     config->internal.fb_last_jwt_generation_error_cb_millis = 0;
                 }
 
-                // reset flag to allow clock synching execution again in ut->syncClock if clocck synching was timed out
+                // reset flag to allow clock synching execution again in TimeHelper::syncClock if clocck synching was timed out
                 config->internal.fb_clock_synched = false;
 
                 reconnect();
@@ -826,13 +826,13 @@ bool Firebase_Signer::refreshToken()
     return true;
 }
 
-void Firebase_Signer::newClient(FB_TCP_CLIENT **client)
+void Firebase_Signer::newClient(FB_TCP_CLIENT **client, bool initSSLClient)
 {
     freeClient(client);
 
     if (!*client)
     {
-        *client = new FB_TCP_CLIENT();
+        *client = new FB_TCP_CLIENT(initSSLClient);
 
         if (*client)
         {
@@ -877,8 +877,13 @@ void Firebase_Signer::setTokenError(int code)
 bool Firebase_Signer::handleTaskError(int code, int httpCode)
 {
     // Close TCP connection and unlock used flag
-    tcpClient->stop();
-    tcpClient->reserved = false;
+
+    if (tcpClient)
+    {
+        tcpClient->stop();
+        tcpClient->reserved = false;
+    }
+
     config->internal.fb_processing = false;
 
     switch (code)
@@ -1805,10 +1810,20 @@ bool Firebase_Signer::reconnect()
     networkChecking = true;
 
     bool noClient = tcpClient == nullptr;
+
+    // We need tcpClient for network checking.
+
+    // Because this function will be called frequently (repeatedly), to avoid too many verbose debug messages from
+    // internal SSL client destructor when freeClient was executed, the new tcpClient will be created
+    // without initializing the internal SSL client.
+
     if (noClient)
-        newClient(&tcpClient);
+        newClient(&tcpClient, false);
 
     reconnect(tcpClient, nullptr);
+
+    if (noClient)
+        freeClient(&tcpClient);
 
     networkChecking = false;
 
@@ -1841,7 +1856,7 @@ bool Firebase_Signer::initClient(PGM_P subDomain, fb_esp_auth_token_status statu
 
     // No external and local client assigned?
     if (!tcpClient && !localTCPClient)
-        newClient(&tcpClient);
+        newClient(&tcpClient, true);
 
     // Stop TCP session
     tcpClient->stop();
@@ -2140,13 +2155,15 @@ bool Firebase_Signer::handleEmailSending(MB_StringPtr payload, fb_esp_user_email
     return true;
 }
 
-void Firebase_Signer::checkToken()
+bool Firebase_Signer::checkToken()
 {
     if (!config || !auth)
-        return;
+        return false;
 
     if (isAuthToken(true) && isExpired())
         handleToken();
+
+    return config->signer.tokens.status == token_status_ready;
 }
 
 bool Firebase_Signer::tokenReady()
@@ -2179,6 +2196,7 @@ void Firebase_Signer::errorToString(int httpCode, MB_String &buff)
 
 #if defined(ENABLE_ERROR_STRING)
 
+    // The httpcode (session.response.code of FirebaseData) passes to this function matches every case here.
     switch (httpCode)
     {
 
@@ -2428,6 +2446,7 @@ void Firebase_Signer::errorToString(int httpCode, MB_String &buff)
         return;
 
     default:
+        // The default case will never be happened.
         return;
     }
 

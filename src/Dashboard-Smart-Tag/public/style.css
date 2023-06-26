@@ -1,12 +1,12 @@
-@import url('https://fonts.cdnfonts.com/css/gotham');
+@import url('https://fonts.cdnfonts.com/css/gotham') screen;
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap") screen;
 
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
+  font-family: "Gotham", sans-serif;
  
   --transition: all 0.2s ease;
 }
@@ -15,14 +15,20 @@
   --color-white: #fff;
   --color-black: #000;
   --color-bg: #ECF2FF;
-  --color-hover: rgb(19, 87, 223);
+  --color-hover: #007BFF;
+  --color-tr-child-bg: #fafaff;
+  --color-tr-child-bg-hover: #ddd;
 }
 
 .dark-mode {
+  --color-card-font: white;
+  --color-card-bg: #343A40;
   --color-white: #000;
   --color-black: #fff;
-  --color-bg: #1d1b31;
-  --color-hover: #0f0;
+  --color-bg: #1D2129;
+  --color-hover: #007BFF;
+  --color-tr-child-bg: #444A50;
+  --color-tr-child-bg-hover: #5d5d5d;
 }
 
 .sidebar {
@@ -276,11 +282,11 @@
 
 
 .home {
-  position: relative;
+  position: absolute;
   top: 0;
   left: 78px;
-  width: calc(100% - 78px);
-  min-height: 100vh;
+  right: 0;
+  bottom: 0;
   background: var(--color-bg);
   z-index: 6;
   transition: var(--transition);
@@ -288,35 +294,38 @@
 
 .sidebar.expand ~ .home {
   left: 250px;
-  width: calc(100% - 250px);
   transition: var(--transition);
 }
 
-.home .hero-content{
-   width: 80%;
-   height: 70%;
-   
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   gap: 60px;
-   position: relative;
+.home .hero-content {
 
-
+  height: 100%;
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  position: absolute;
+  width: 100vw;
+  flex-wrap: wrap;
 }
+
+.hero-content {
+  height: 600px;
+}
+
 .home .hero-content .main-content h1{
   font-size: 3rem;
-  color: #545956;
+  color: var(--color-card-font);
   line-height: 3rem;
 }
 .home .hero-content .main-content #p1{
-  color: #545956;
+  color: var(--color-card-font);
   font-weight: 500;
   font-size: 1.2rem;
   margin: 30px 0 10px 0;
 }
 .home .hero-content .main-content p{
-  color: rgb(56, 56, 56);
+  color: var(--color-card-font);
   width: 85%;
 }
 
@@ -345,7 +354,7 @@
   position: relative;
   height: 2.8em;
   padding-right: 3.3em;
-  margin-top: 25px;
+  margin-top: 0px;
   cursor: pointer;
 }
 
@@ -389,14 +398,6 @@ html {
     align-content: center;
 }
 
-body {
-    font-family: 'Gotham',sans-serif;
-    margin:0 auto;
-    width: 100%;
-    height: 100%;
-}
-
-
 *,
 *:before,
 *:after{
@@ -435,55 +436,10 @@ body {
     right: -30px;
     bottom: -80px;
 }
-form {
-    color: #080710;
-    height: auto;
-    width: auto;
-    background-color: rgba(254,209,0.13);
-    position: absolute;
-    transform: translate(-50%,-50%);
-    top: 55%;
-    left: 50%;
-    border-radius: 10px;
-    backdrop-filter: blur(30px);
-    border: 1px solid #080710;
-    box-shadow: 0 0 900px rgba(254,209,0.13);
-    padding: 50px 35px;
-}
-form *{
-    font-family: 'Gotham',sans-serif;
-    letter-spacing: 0.5px;
-    outline: none;
-    border: none;
-}
-form h3{
-    font-size: 32px;
-    font-weight: 500;
-    line-height: 42px;
-    text-align: center;
-}
-
-label{
-    display: block;
-    margin-top: 30px;
-    font-size: 16px;
-    font-weight: 500;
-}
-input{
-    background-color: rgba(255,255,255,0.07);
-    border-radius: 3px;
-    padding: 0 10px;
-    margin-top: 8px;
-    font-size: 14px;
-    font-weight: 300;
-}
-
-::placeholder{
-    color: #000000;
-}
 
 #authentication-bar{
-    background-color:mintcream;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: var(--color-card-bg);
     padding-top: 10px;
     padding-bottom: 10px;
 }
@@ -499,13 +455,6 @@ input{
     display: flex;
     align-items: center;
   }
-.bolinha {
-    max-width: 50px;
-    width: 50px;
-    height: 50px;
-    background-color: red;
-    border-radius: 50%;
-  }
 
 .status {
     font-weight: bold;
@@ -513,27 +462,26 @@ input{
     border-radius: 5px;
   }
 
-.card {
-    background-color: white;
-    box-shadow: 2px 2px 12px 1px rgba(140,140,140,.5);
-    padding: 5%;
-}
+  .card {
+    color: var(--color-card-font);
+    background-color: var(--color-card-bg);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    padding: 16px;
+    margin: 20px;
+  }
 
-.cards {
-    min-width: 800px;
-    margin: 0 auto;
-    margin-bottom: 10px;
+  .cards {
     display: grid;
-    grid-gap: 2rem;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 2fr));
-}
-
-#elemento-novo {
-  display: none; /* Inicialmente, oculta o elemento novo */
-}
+    grid-gap: 20px;
+    grid-template-columns: repeat(auto, minmax(400px, 1fr));
+    width: 80vw;
+    height: max-content;
+  }
+  
 
 .reading {
-    color: #193036;
+    color: var(--color-card-font);
 }
 
 .date-time{
@@ -542,8 +490,8 @@ input{
 }
 
 button {
-    background-color: rgba(254,209,0.13);
-    color: #c52c2c;
+    background-color: #7b52b9;
+    color: #fff;
     padding: 14px 20px;
     margin: 8px 0;
     border: none;
@@ -555,14 +503,8 @@ button:hover {
    opacity: 0.8;
 }
 .deletebtn{
-    color: #fed100;
+    color: #fff;
     background-color: #c52c2c;
-}
-
-.form-elements-container{
-    padding: 16px;
-    width: 250px;
-    margin: 0 auto;
 }
 
 input[type=text], input[type=password] {
@@ -572,7 +514,7 @@ input[type=text], input[type=password] {
     display: inline-block;
     border: 1px solid #ccc;
     box-sizing: border-box;
-    background-color: white;
+    background-color: var(--color-bg);
 }
 
 table {
@@ -582,17 +524,19 @@ table {
 }   
 tr, td {
     padding: 0.25rem;
+
 }
 tr:nth-child(even) {
-    background-color: #f2f2f2
+    background-color: var(--color-tr-child-bg)
 }
 tr:hover {
-    background-color: #ddd;
+  background-color: var(--color-tr-child-bg-hover);
+  color: var(--color-card-font);
 }
 th {
     position: sticky;
     top: 0;
-    background-color: #50b8b4;
+    background-color: #2caffe;
     color: white;
 }
 
@@ -606,16 +550,14 @@ th {
     width: 100%; /* Full width */
     height: 100%; /* Full height */
     overflow: auto; /* Enable scroll if needed */
-    background-color: #474e5d;
+    background-color: var(--color-bg);
     padding-top: 50px;
 }
   
 /* Modal Content/Box */
 .modal-content {
-    background-color: #fefefe;
-    margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
-    border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
+    margin: 15% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+    width: 40%; /* Could be more or less, depending on screen size */
 }
   
 /* Style the horizontal ruler */
@@ -647,13 +589,51 @@ hr {
     display: table;
 }
 
+.container {
+  position: relative;
+  width: fit-content;
+}
+
+.meuLabel {
+  position: absolute;
+  bottom: 0px;
+  right: 0;
+  padding: 0px 12px;
+  transform: translate(0, 100%);
+  background-color: #f1f1f1;
+  color: #333;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+
+.animacaoEsquerda {
+  animation: animacaoEsquerda 6s linear;
+}
+
+@keyframes animacaoEsquerda {
+  0% {
+    transform: translate(100%, 100%);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(0, 100%);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-100%, 100%);
+    opacity: 0;
+  }
+}
+
+.changed {
+  animation: none;
+  animation: animacaoEsquerda 6s linear;
+}
+
 /* Change styles for cancel button and delete button on extra small screens */
 @media screen and (max-width: 1080px) {
     .cancelbtn, .deletebtn {
         width: 100%;
-    }
-    .hero-content {
-        left: 150px;
     }
 }
 /* Change styles for cancel button and delete button on extra small screens */
@@ -662,27 +642,234 @@ hr {
       width: 100%;
   }
   .hero-content {
-      left: 250px;
+      left: 50px;
+  }
+  .sidebar {
+    width: 78px;
   }
 }
 
 /* Media query for screens larger than 768px */
-@media (max-width: 1100px) {
+@media (max-width: 1240px) {
   .sidebar {
     overflow-y: auto;
     overflow: auto;
     overflow-x: hidden;
     overflow-y: var(--color-black);
   }
+
   .sidebar::-webkit-scrollbar {
-  width: 8px; /* Largura da barra de rolagem */
+    width: 8px; /* Largura da barra de rolagem */
+  }
+
+  .sidebar::-webkit-scrollbar-thumb {
+    background-color: #888; /* Cor do preenchimento do polegar */
+  }
+
+  .sidebar::-webkit-scrollbar-track {
+    background-color: #f1f1f1; /* Cor do fundo da barra de rolagem */
+  }
 }
 
-.sidebar::-webkit-scrollbar-thumb {
-  background-color: #888; /* Cor do preenchimento do polegar */
+/* Media query for screens larger than 768px */
+@media (max-width: 720px) {
+
+  .cssbuttons-io-button {
+    height: fit-content;
+    margin-top: 20px;
+  }
+  .meuLabel{
+    height: fit-content;
+    margin-top: 20px;
+  }
+
+}
+@media (max-width: 1240px) {
+
+
 }
 
-.sidebar::-webkit-scrollbar-track {
-  background-color: #f1f1f1; /* Cor do fundo da barra de rolagem */
+
+body {
+  font-family: "Gotham", sans-serif;
+  background-color: var(--color-bg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%; /* Preenche 100% da largura do elemento pai */
+  font-size: 1.2em; /* Tamanho de fonte relativo ao elemento pai */
 }
+
+.login-form {
+  position: relative;
+  top: 50%;
+  right: 20%;
+  transform: translateY(-80%);
+}
+
+.form-elements-container {
+  width: 350px;
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-elements-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form-elements-container form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-elements-container label {
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.form-elements-container input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.form-elements-container button {
+  background-color: #A370F0;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 10px;
+  cursor: pointer;
+}
+    
+    .distance {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    
+    .image-container {
+      position: relative;
+    }
+    
+    .router-image {
+      max-width: 100%;
+      height: auto;
+    }
+    
+    .device-marker {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background-color: red;
+      border-radius: 50%;
+    }
+
+    .forgot-password {
+      margin-top: 20px;
+      text-align: center;
+    }
+    
+    .forgot-password a {
+      font-family: 'Gotham', sans-serif;
+      font-size: 14px;
+      color: var(--color-black);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+    
+    .forgot-password a:hover {
+      color: var(--color-hover);
+    }
+    
+a {
+  text-decoration: none;
+} 
+a:hover {
+  text-decoration: underline;
+}
+
+* {
+  outline: none;
+  border: none;
+  padding: 0;
+}
+
+.container-leituras {
+  position: relative;
+  margin: 0px 0px;
+  width: 300px;
+}
+
+.container-leituras:before {
+  position: absolute;
+  left: 25px;
+  top: 0px;
+  width: 2px;
+  height: 36px;
+  transform: scale(0);
+  z-index: 1;
+  transition: all 0.5s cubic-bezier(.87, -.41, .19, 1.44);
+}
+
+.active:before {
+  transform: scale(1);
+  transition-delay: 0.3s;
+  animation: 0.6s cubic-bezier(.87, -.41, .19, 1.44) 0.5s infinite forwards focus;
+}
+
+.input-leituras-grafico {
+  border-radius: 36px;
+  position: absolute;
+  width: auto;
+  height: 64px;
+  transition: all 0.5s cubic-bezier(.87, -.41, .19, 1.44);
+}
+
+.active .input-leituras-grafico {
+  width: 100%;
+  padding-left: 25px;
+  border-radius: 36px;
+}
+
+.btn-leituras {
+  background: var(--color-card-bg);
+  color: var(--color-card-font);
+  position: relative;
+  margin-top: 0px;
+  height: 100%;
+  border-radius: 36px;
+  width: auto;
+  height: 64px;
+  transition: all 0.5s cubic-bezier(.87, -.41, .19, 1.44);
+}
+
+
+.active .btn-leituras {
+  transform: translateX(260px);
+}
+
+.active .btn-leituras:before {
+  transform: scale(1);
+}
+
+.focus:before {
+  transform: scale(0);
+  animation: none;
+}
+
+@keyframes focus {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }

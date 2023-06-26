@@ -2,35 +2,19 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard Smart-Tag</title>
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-analytics.js"></script>
   <!-- Firebase features -->
   <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-database.js"></script>
-  <script>
-         // REPLACE WITH YOUR web app's Firebase configuration
-         const firebaseConfig = {
-        apiKey: "AIzaSyDF6XTQXIhNhPK8k04pCCpXmSqN2RBY5Zk",
-        authDomain: "esp-firebase-vitor.firebaseapp.com",
-        databaseURL: "https://esp-firebase-vitor-default-rtdb.firebaseio.com",
-        projectId: "esp-firebase-vitor",
-        storageBucket: "esp-firebase-vitor.appspot.com",
-        messagingSenderId: "909227729500",
-        appId: "1:909227729500:web:a3b4fd749cf59d8a66fc99"
-      };
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-
-    // Auth and database references
-    const auth = firebase.auth();
-    const db = firebase.database();
-  </script>
   <!-- Highcharts for charts -->
   <script src="https://code.highcharts.com/highcharts.js"></script>
   <!-- jQuery for use -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
   <!-- Font Awesome icons -->
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
   <!-- Gauges JavaScript library -->
@@ -50,9 +34,11 @@
     </div>
     <ul class="nav-links">
       <li>
-        <i class="bx bx-search search-btn"></i>
-        <input type="text" placeholder="Pesquisar dispositivos" />
-        <span class="tooltip">Pesquisar</span>
+        <a href="/" id="btn-pesquisar">
+          <i class="bx bx-search search-btn" id="bx bx-search search-btn"></i>
+        </a>
+          <input type="text" id="campo-pesquisar" placeholder="Pesquisar dispositivos" />
+          <span class="tooltip">Pesquisar</span>
       </li>
       <li>
         <a href="index.html">
@@ -62,25 +48,11 @@
         <span class="tooltip">Início</span>
       </li>
       <li>
-        <a href="#">
-          <i class='bx bxs-dashboard'></i>
-          <span class="title">Dashboard</span>
-        </a>
-        <span class="tooltip">Dashboard</span>
-      </li>
-      <li>
         <a href="/" id="dispositivos-option">
           <i class="bx bx-devices"></i>
           <span class="title">Dispositivos</span>
         </a>
         <span class="tooltip">Dispositivos</span>
-      </li>
-      <li>
-        <a href="#">
-          <i class='bx bx-line-chart'></i>
-          <span class="title">Gráficos</span>
-        </a>
-        <span class="tooltip">Gráficos</span>
       </li>
       <li>
         <a href="#">
@@ -117,37 +89,39 @@
           </p>
         </div>
             <!-- Login Form -->
-    <form id="login-form" style="display: none;">
-      <div class="form-elements-container">
-        <label for="input-email"><b>E-mail</b></label>
-        <input type="text" placeholder="Digite seu e-mail" id="input-email" required>
 
-        <label for="input-password"><b>Senha</b></label>
-        <input type="password" placeholder="Digite sua senha" id="input-password" required>
+        <form class="login-form" id="login-form" style="display: none;">
+          <div class="form-elements-container">
+              <h1>Login</h1>
+            <label for="input-email"><b>E-mail</b></label>
+            <input type="text" placeholder="Digite seu e-mail" id="input-email" required>
 
-        <button type="submit" id="login-button">Entrar</button>
-        <p id="error-message" style="color:red;"></p>
-      </div>
-    </form>
+            <label for="input-password"><b>Senha</b></label>
+            <input type="password" placeholder="Digite sua senha" id="input-password" required>
+
+            <button type="submit" id="login-button">Entrar</button>
+            <p id="error-message" style="color:red;"></p>
+            <a href="login.html" class="forgot-password"> Esqueci a senha</a>
+          </div>
+      </form>
 
     <!-- Content (Sensor Readings) -->
     <div class="content-sign-in" id="content-sign-in" style="display: none;">
       <p>
         <span class="date-time">Última atualização: <span id="lastUpdate"></span></span>
       </p>
-      <p>
-        <div class="status-container">
-          <div class="bolinha" id="bolinha"></div>
-          <span id="status" class="status"></span>
-        </div>
-        Card: <input type="checkbox" id="cards-checkbox" name="cards-checkbox" checked>
-        Gauge: <input type="checkbox" id="gauges-checkbox" name="gauges-checkbox" unchecked>
-        Gráfico: <input type="checkbox" id="charts-checkbox" name="charts-checkbox" unchecked>
+
+      <p><div class="card" id="card-checkbox"><P>
+        Card <input type="checkbox" id="cards-checkbox" name="cards-checkbox" checked></P>
+        <p>Gauge <input type="checkbox" id="gauges-checkbox" name="gauges-checkbox" checked></p>
+        <p>Gráfico <input type="checkbox" id="charts-checkbox" name="charts-checkbox" checked></p>
+      </div>
       </p>
       <div id="cards-div">
         <div class="cards">
           <div class="card">
-            <p><i class="fas fa-signal"></i> <label></label>WI-FI</label></p>
+            <p><i id="signal-icon" class="fas fa-signal"></i> <label>WI-FI</label></p>
+              <p><span id="status" class="status"></span></p>
             <p><span class="reading"><span id="temp"></span> dBm</span></p>
           </div>
           <div class="card">
@@ -159,17 +133,20 @@
       <div id="gauges-div">
         <div class="cards">
           <div class="card">
-            <canvas id="gauge-temperature"></canvas>
+            <p><canvas id="gauge-temperature"></canvas></p>
           </div>
         </div>
       </div>
-      <div id="charts-div" style="display:none">
+      <div id="charts-div" style="display:block">
         <div>
-          <p> Número de leituras: <input type="number" id="charts-range"></p>
+          <div class="container-leituras">
+            <input class="input-leituras-grafico" type="number" id="charts-range">
+            <button class="btn-leituras">Número de leituras</button>
+          </div>
         </div>
         <div class="cards">
           <div class="card">
-            <p><i class="fas fa-thermometer-half" style="color:#059e8a;"></i> GRÁFICO DE FORÇA DO SINAL WI-FI</p>
+            <p><i class='bx bx-line-chart'></i> Gráfico de informações do dispositivo</p>
             <div id="chart-temperature" class="chart-container"></div>
           </div>
         </div>
@@ -197,7 +174,9 @@
           <table id="readings-table">
             <tr id="theader">
               <th>Data/Hora</th>
-              <th>Força Wi-Fi (dBm)</th>
+              <th>Dispositivo</th>
+              <th>Setor</th>
+              <th>Distância do roteador</th>
             </tr>
             <tbody id="tbody"></tbody>
           </table>
@@ -208,25 +187,13 @@
     </div>
   </div>
 </div>
-<div id="elemento-novo">
-<button class="cssbuttons-io-button">
-  <span class="button-text">Clique Aqui</span>
-  <span class="icon">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-      <path d="M0 0h24v24H0z" fill="none"/>
-      <path d="M7 10l5 5 5-5H7z"/>
-    </svg>
-  </span>
-</button>
-</div>
 </section>
 <!-- Include JS files -->
 <script src="scripts/auth.js"></script>
 <script src="scripts/charts-definition.js"></script>
 <script src="scripts/gauges-definition.js"></script>
 <script src="scripts/index.js"></script>
-<script src="scripts/receberStatus.js"></script>
 <script src="scripts/menuLateral.js"></script>
-<script src="scripts/dispositivos.js"></script>
+<script src="scripts/enviar-email.js"></script>
 </body>
 </html>

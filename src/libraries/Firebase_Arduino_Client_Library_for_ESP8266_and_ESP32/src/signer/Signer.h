@@ -1,5 +1,5 @@
 #include "Firebase_Client_Version.h"
-#if !FIREBASE_CLIENT_VERSION_CHECK(40311)
+#if !FIREBASE_CLIENT_VERSION_CHECK(40314)
 #error "Mixed versions compilation."
 #endif
 
@@ -8,7 +8,7 @@
  *
  * This library supports Espressif ESP8266, ESP32 and Raspberry Pi Pico
  *
- * Created June 7, 2023
+ * Created June 14, 2023
  *
  * This work is a part of Firebase ESP Client library
  * Copyright (c) 2023 K. Suwatchai (Mobizt)
@@ -148,7 +148,7 @@ private:
     /* set the token status by error code */
     void setTokenError(int code);
     /* create new TCP client */
-    void newClient(FB_TCP_CLIENT **client);
+    void newClient(FB_TCP_CLIENT **client, bool initSSLClient);
     /* delete TCP client */
     void freeClient(FB_TCP_CLIENT **client);
     /* handle the token processing task error */
@@ -167,7 +167,7 @@ private:
     /* request or refresh the token */
     bool requestTokens(bool refresh);
     /* check the token ready status and process the token tasks */
-    void checkToken();
+    bool checkToken();
     /* parse expiry time from string */
     void getExpiration(const char *exp);
     /* send email */

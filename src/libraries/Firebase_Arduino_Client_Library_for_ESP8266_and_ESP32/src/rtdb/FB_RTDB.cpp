@@ -1,14 +1,14 @@
 #include "Firebase_Client_Version.h"
-#if !FIREBASE_CLIENT_VERSION_CHECK(40311)
+#if !FIREBASE_CLIENT_VERSION_CHECK(40314)
 #error "Mixed versions compilation."
 #endif
 
 /**
- * Google's Firebase Realtime Database class, FB_RTDB.cpp version 2.0.14
+ * Google's Firebase Realtime Database class, FB_RTDB.cpp version 2.0.15
  *
  * This library supports Espressif ESP8266, ESP32 and RP2040 Pico
  *
- * Created April 5, 2023
+ * Created June 14, 2023
  *
  * This work is a part of Firebase ESP Client library
  * Copyright (c) 2023 K. Suwatchai (Mobizt)
@@ -639,7 +639,7 @@ bool FB_RTDB::handleStreamRead(FirebaseData *fbdo)
     if (fbdo->tcpClient.reserved)
         return false;
 
-    // prevent redundant calling
+    // prevent nested calling
     if (fbdo->session.streaming)
         return false;
 
@@ -648,7 +648,9 @@ bool FB_RTDB::handleStreamRead(FirebaseData *fbdo)
     if (fbdo->session.rtdb.pause || fbdo->session.rtdb.stream_stop)
         return exitStream(fbdo, true);
 
-    if (!fbdo->tokenReady())
+    // Check token status via checkToken().
+    // Don't check from tokenReady() as it depends on network status too.
+    if (!Signer.checkToken())
         return exitStream(fbdo, false);
 
     bool ret = false;
@@ -1316,7 +1318,7 @@ uint8_t FB_RTDB::openErrorQueue(FirebaseData *fbdo, MB_StringPtr filename,
     return count;
 }
 
-#if defined(ESP32) || defined(ESP8266) || defined(MB_ARDUINO_PICO)
+#if (defined(MBFS_FLASH_FS) || defined(MBFS_SD_FS)) && (defined(ESP32) || defined(ESP8266) || defined(MB_ARDUINO_PICO))
 uint8_t FB_RTDB::readQueueFile(FirebaseData *fbdo, fs::File &file, QueueItem &item, uint8_t mode)
 {
 
@@ -2545,7 +2547,7 @@ waits:
                         // we keep the first part of JSON for parsing later with parsePayload()
                         MB_String stream = payload.substr(0, response.payloadOfs);
                         // append " and } to make a valid JSON
-                        stream += fb_esp_pgm_str_4; // "\""
+                        stream += fb_esp_pgm_str_4;  // "\""
                         stream += fb_esp_pgm_str_11; // "}"
 
                         payload.erase(0, response.payloadOfs);
@@ -3463,7 +3465,6 @@ bool FB_RTDB::connectionError(FirebaseData *fbdo)
 {
     return fbdo->session.response.code == FIREBASE_ERROR_TCP_ERROR_CONNECTION_REFUSED ||
            fbdo->session.response.code == FIREBASE_ERROR_TCP_ERROR_CONNECTION_LOST ||
-           fbdo->session.response.code == FIREBASE_ERROR_TCP_ERROR_SEND_REQUEST_FAILED ||
            fbdo->session.response.code == FIREBASE_ERROR_TCP_ERROR_NOT_CONNECTED ||
            fbdo->session.response.code == FIREBASE_ERROR_TCP_RESPONSE_PAYLOAD_READ_TIMED_OUT;
 }

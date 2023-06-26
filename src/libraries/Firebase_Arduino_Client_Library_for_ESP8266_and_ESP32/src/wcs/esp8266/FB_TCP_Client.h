@@ -1,12 +1,12 @@
 #include "Firebase_Client_Version.h"
-#if !FIREBASE_CLIENT_VERSION_CHECK(40311)
+#if !FIREBASE_CLIENT_VERSION_CHECK(40314)
 #error "Mixed versions compilation."
 #endif
 
 /**
- * Firebase TCP Client v1.2.4
+ * Firebase TCP Client v1.2.6
  *
- * Created March 5, 2023
+ * Created June 14, 2023
  *
  * The MIT License (MIT)
  * Copyright (c) 2023 K. Suwatchai (Mobizt)
@@ -43,6 +43,8 @@
 #include "mbfs/MB_FS.h"
 #include "./wcs/base/FB_TCP_Client_Base.h"
 
+#include "lwip/sockets.h"
+
 class FB_TCP_Client : public FB_TCP_Client_Base
 {
 
@@ -53,7 +55,7 @@ class FB_TCP_Client : public FB_TCP_Client_Base
   friend class UtilsClass;
 
 public:
-  FB_TCP_Client();
+  FB_TCP_Client(bool initSSLClient = true);
   ~FB_TCP_Client();
 
   void setInsecure();
@@ -76,6 +78,8 @@ public:
 
   int hostByName(const char *name, IPAddress &ip);
 
+  bool connect();
+
   void setTimeout(uint32_t timeoutmSec);
 
   bool begin(const char *host, uint16_t port, int *response_code);
@@ -87,7 +91,7 @@ public:
   void ethDNSWorkAround();
 
 private:
-  std::unique_ptr<FB_ESP_SSL_CLIENT> wcs = std::unique_ptr<FB_ESP_SSL_CLIENT>(new FB_ESP_SSL_CLIENT());
+  std::unique_ptr<FB_ESP_SSL_CLIENT> wcs;
 
 #if defined(ESP8266)
   uint16_t bsslRxSize = 4096;

@@ -1,14 +1,14 @@
 #include "Firebase_Client_Version.h"
-#if !FIREBASE_CLIENT_VERSION_CHECK(40311)
+#if !FIREBASE_CLIENT_VERSION_CHECK(40314)
 #error "Mixed versions compilation."
 #endif
 
 /**
- * Google's Firebase Realtime Database class, FB_RTDB.h version 2.0.14
+ * Google's Firebase Realtime Database class, FB_RTDB.h version 2.0.15
  *
  * This library supports Espressif ESP8266, ESP32 and RP2040 Pico
  *
- * Created April 5, 2023
+ * Created June 14, 2023
  *
  * This work is a part of Firebase ESP Client library
  * Copyright (c) 2023 K. Suwatchai (Mobizt)
@@ -2708,7 +2708,7 @@ private:
 #endif
 
   uint8_t openErrorQueue(FirebaseData *fbdo, MB_StringPtr filename, fb_esp_mem_storage_type storageType, uint8_t mode);
-#if defined(ESP32) || defined(ESP8266) || defined(MB_ARDUINO_PICO)
+#if (defined(MBFS_FLASH_FS) || defined(MBFS_SD_FS)) && (defined(ESP32) || defined(ESP8266) || defined(MB_ARDUINO_PICO))
   uint8_t readQueueFile(FirebaseData *fbdo, fs::File &file, QueueItem &item, uint8_t mode);
 #endif
 #if defined(MBFS_ESP32_SDFAT_ENABLED)

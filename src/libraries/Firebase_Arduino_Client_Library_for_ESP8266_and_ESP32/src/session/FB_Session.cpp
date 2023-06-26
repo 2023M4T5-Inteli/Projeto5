@@ -1,14 +1,14 @@
 #include "Firebase_Client_Version.h"
-#if !FIREBASE_CLIENT_VERSION_CHECK(40311)
+#if !FIREBASE_CLIENT_VERSION_CHECK(40314)
 #error "Mixed versions compilation."
 #endif
 
 /**
- * Google's Firebase Data class, FB_Session.cpp version 1.3.7
+ * Google's Firebase Data class, FB_Session.cpp version 1.3.8
  *
  * This library supports Espressif ESP8266, ESP32 and RP2040 Pico
  *
- * Created April 5, 2023
+ * Created June 14, 2023
  *
  * This work is a part of Firebase ESP Client library
  * Copyright (c) 2023 K. Suwatchai (Mobizt)
@@ -585,6 +585,9 @@ WiFiClientSecure *FirebaseData::getWiFiClient()
 
 bool FirebaseData::httpConnected()
 {
+    if (tcpClient.isKeepAliveSet())
+        session.connected = tcpClient.connected();
+
     return session.connected;
 }
 
@@ -599,6 +602,16 @@ String FirebaseData::fileTransferError()
         return session.error.c_str();
     else
         return errorReason();
+}
+
+void FirebaseData::keepAlive(int tcpKeepIdleSeconds, int tcpKeepIntervalSeconds, int tcpKeepCount)
+{
+    tcpClient.keepAlive(tcpKeepIdleSeconds, tcpKeepIntervalSeconds, tcpKeepCount);
+}
+
+bool FirebaseData::isKeepAlive()
+{
+    return tcpClient.isKeepAlive;
 }
 
 String FirebaseData::payload()
@@ -700,7 +713,7 @@ String FirebaseData::downloadURL()
     if (bucket.length() > 0)
     {
         MB_String host;
-        HttpHelper::addGAPIsHost(host, fb_esp_storage_ss_pgm_str_1/* "firebasestorage." */);
+        HttpHelper::addGAPIsHost(host, fb_esp_storage_ss_pgm_str_1 /* "firebasestorage." */);
         URLHelper::host2Url(link, host);
         link += fb_esp_storage_ss_pgm_str_2; // "/v0/b/"
         link += bucket;
@@ -1073,14 +1086,6 @@ bool FirebaseData::prepareDownload(const MB_String &filename, fb_esp_mem_storage
     // We can't open file (flash or sd) to write here because of truncated result, only append is ok.
     // We have to remove existing file
     Signer.mbfs->remove(filename, mbfs_type type);
-#else
-    int ret = Signer.mbfs->open(filename, mbfs_type type, mb_fs_open_mode_write);
-    if (ret < 0)
-    {
-        tcpClient.flush();
-        session.response.code = ret;
-        return false;
-    }
 #endif
     return true;
 }
@@ -1173,7 +1178,7 @@ bool FirebaseData::processDownload(const MB_String &filename, fb_esp_mem_storage
                         else
                         {
                             // based64 encoded string of file data
-                            tcpHandler.isBase64File = StringHelper::compare((char *)buf, 0, fb_esp_rtdb_pgm_str_8/* "\"file,base64," */, true);
+                            tcpHandler.isBase64File = StringHelper::compare((char *)buf, 0, fb_esp_rtdb_pgm_str_8 /* "\"file,base64," */, true);
                         }
 
                         if (tcpHandler.isBase64File)

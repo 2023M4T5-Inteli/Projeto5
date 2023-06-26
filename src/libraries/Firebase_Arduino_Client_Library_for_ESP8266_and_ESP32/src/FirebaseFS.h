@@ -1,5 +1,5 @@
 #include "Firebase_Client_Version.h"
-#if !FIREBASE_CLIENT_VERSION_CHECK(40311)
+#if !FIREBASE_CLIENT_VERSION_CHECK(40314)
 #error "Mixed versions compilation."
 #endif
 
@@ -179,6 +179,5 @@ static SdFat sd_fat_fs;   // should declare as static here
 
 #endif
 
-// For Raspberry Pi Pico, FreeRTOS was not used in this library by default as it can cause some operation deadlocks. 
+// For Raspberry Pi Pico, FreeRTOS was not used in this library by default as it can cause some operation deadlocks.
 // To use or enable FreeRTOS in this library, include FreeRTOS header in this file or CustomFirebaseFS.h.
-

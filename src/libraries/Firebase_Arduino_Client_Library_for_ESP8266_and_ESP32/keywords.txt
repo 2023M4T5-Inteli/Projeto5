@@ -254,7 +254,7 @@ getIndex    KEYWORD2
 deleteIndex KEYWORD2
 
 #############################################
-# Methods for Firebase Data object (KEYWORD2)
+# Methods for FirebaseData object (KEYWORD2)
 #############################################
 
 pauseFirebase   KEYWORD2
@@ -291,6 +291,8 @@ getBackupFileSize   KEYWORD2
 clear   KEYWORD2
 fileTransferError   KEYWORD2
 payload KEYWORD2
+keepAlive   KEYWORD2
+isKeepAlive KEYWORD2
 dataTypeEnum    KEYWORD2
 queryFilter KEYWORD2
 empty   KEYWORD2

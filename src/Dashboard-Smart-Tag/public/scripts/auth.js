@@ -13,26 +13,40 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     });
 
-    // login
-    const loginForm = document.querySelector('#login-form');
-    loginForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        // get user info
-        const email = loginForm['input-email'].value;
-        const password = loginForm['input-password'].value;
-        // log the user in
-        auth.signInWithEmailAndPassword(email, password).then((cred) => {
-            // close the login modal & reset form
-            loginForm.reset();
-            console.log(email);
-        })
-        .catch((error) =>{
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            document.getElementById("error-message").innerHTML = errorMessage;
-            console.log(errorMessage);
-        });
+const loginForm = document.querySelector('#login-form');
+loginForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const email = loginForm['input-email'].value;
+  const password = loginForm['input-password'].value;
+
+  auth.signInWithEmailAndPassword(email, password)
+    .then((cred) => {
+      loginForm.reset();
+      console.log(email);
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      let errorMessage;
+
+      switch (errorCode) {
+        case 'auth/user-not-found':
+          errorMessage = 'Usuário não encontrado.';
+          break;
+        case 'auth/wrong-password':
+          errorMessage = 'Senha incorreta.';
+          break;
+        // Adicione outros casos de erro conforme necessário
+
+        default:
+          errorMessage = 'Ocorreu um erro durante o login. Por favor, tente novamente mais tarde.';
+      }
+
+      document.getElementById("error-message").innerHTML = errorMessage;
+      console.log(errorMessage);
     });
+});
+
 
 // logout
 const logout = document.querySelector('#logout-link');

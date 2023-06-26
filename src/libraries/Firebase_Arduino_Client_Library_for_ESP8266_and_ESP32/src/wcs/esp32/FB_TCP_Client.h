@@ -1,12 +1,12 @@
 #include "Firebase_Client_Version.h"
-#if !FIREBASE_CLIENT_VERSION_CHECK(40311)
+#if !FIREBASE_CLIENT_VERSION_CHECK(40314)
 #error "Mixed versions compilation."
 #endif
 
 /**
- * Firebase TCP Client v1.1.24
+ * Firebase TCP Client v1.1.27
  *
- * Created March 5, 2022
+ * Created June 14, 2023
  *
  * The MIT License (MIT)
  * Copyright (c) 2023 K. Suwatchai (Mobizt)
@@ -39,7 +39,7 @@
 #include <Arduino.h>
 #include "mbfs/MB_MCU.h"
 
-#if defined(ESP32) && !defined(ENABLE_EXTERNAL_CLIENT)
+#if defined(ESP32) && !defined(FB_ENABLE_EXTERNAL_CLIENT)
 
 #include "FB_Network.h"
 #include "FB_Error.h"
@@ -51,6 +51,8 @@ extern "C"
 #include <esp_err.h>
 #include <esp_wifi.h>
 }
+
+#include "lwip/sockets.h"
 
 // The derived class to fix the memory leaks issue
 // https://github.com/espressif/arduino-esp32/issues/5480
@@ -83,7 +85,7 @@ class FB_TCP_Client : public FB_TCP_Client_Base
   friend class UtilsClass;
 
 public:
-  FB_TCP_Client();
+  FB_TCP_Client(bool initSSLClient = true);
   ~FB_TCP_Client();
 
   void setCACert(const char *caCert);
@@ -111,7 +113,8 @@ public:
   bool connect();
 
 private:
-  std::unique_ptr<FB_WCS> wcs = std::unique_ptr<FB_WCS>(new FB_WCS());
+
+  std::unique_ptr<FB_WCS> wcs;
   char *cert = NULL;
 
   bool ethLinkUp();

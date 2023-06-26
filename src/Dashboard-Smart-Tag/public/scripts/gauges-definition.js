@@ -1,52 +1,35 @@
 // Create Temperature Gauge
 function createTemperatureGauge() {
-    var gauge = new LinearGauge({
+    var gauge = new RadialGauge({
         renderTo: 'gauge-temperature',
-        width: 120,
-        height: 400,
-        units: "Sinal Wi-Fi (dBm)",
+        width: 150,
+        height: 150,
+        units: 'dBm',
+        valueDec: 0,
+        valueInt: 2, 
         minValue: -100,
-        startAngle: 90,
-        ticksAngle: 180,
         maxValue: 0,
-        colorValueBoxRect: "#049faa",
-        colorValueBoxRectEnd: "#049faa",
-        colorValueBoxBackground: "#f1fbfc",
-        valueDec: 2,
-        valueInt: 2,
-        majorTicks: [
-            "-96",
-            "-84",
-            "-72",
-            "-60",
-            "-48",
-            "-36",
-            "-24",
-            "-12",
-            "0"
-        ],
-        minorTicks: 4,
+        majorTicks: ['-100', '-80', '-60', '-40', '-20', '0'],
+        minorTicks: 20,
+        ticksAngle: 270,
+        startAngle: 45,
         strokeTicks: true,
         highlights: [
-            {
-                "from": -24,
-                "to": 0,
-                "color": "rgba(200, 50, 50, .75)"
-            }
+          { from: -100, to: -80, color: 'rgba(255,0,0,.25)' },
+          { from: -80, to: -60, color: 'rgba(255,255,0,.25)' },
+          { from: -60, to: 0, color: 'rgba(0,255,0,.25)' }
         ],
-        colorPlate: "#fff",
-        colorBarProgress: "#CC2936",
-        colorBarProgressEnd: "#049faa",
+        colorPlate: '#fff',
         borderShadowWidth: 0,
         borders: false,
-        needleType: "arrow",
+        needleType: "rectangle",
         needleWidth: 2,
-        needleCircleSize: 7,
-        needleCircleOuter: true,
-        needleCircleInner: false,
+        needleCircleSize: 25,
+        needleCircleOuter: false,
+        needleCircleInner: true,
         animationDuration: 1500,
-        animationRule: "linear",
-        barWidth: 10,
-    });
+        animationRule: "linear"
+      });
+
     return gauge;
 }
