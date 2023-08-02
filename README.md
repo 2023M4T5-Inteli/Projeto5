@@ -18,20 +18,70 @@
 
 ## 📝 Descrição
 
- Em breve....
+ Este projeto consiste no desenvolvimento de uma solução IoT avançada para o rastreamento de tablets e notebooks da Pirelli. A solução permitirá ao gerente da área de TI acessar facilmente a localização desses dispositivos por meio de um dashboard.
  
 
 ## 📁 Estrutura de pastas
 
-Em breve...
+|--> Documentos<br>
+|--> src<br>
+&emsp;|--> Backend<br>
+&emsp;|--> Circuito<br>
+| readme.md<br>
+| license.txt
+
+- <b>Documentos</b>: Aqui estarão todos os documentos do projeto.
+  
+- <b>src</b>: Todo o código fonte criado para o desenvolvimento do projeto.
+
+- <b>readme.md</b>: Arquivo que serve como guia e explicação geral sobre o projeto.
+
+- <b>license.txt</b>: Arquivo com a licença de uso dos produtores do projeto.
 
 ## 💻 Execução dos projetos
 
-Em breve....
+<p>O conteúdo do documento "Manual de Instruções", que fornece orientações para a execução deste projeto, está disponível na pasta "documentos".
 
 ## 🗃 Histórico de lançamentos
 
-Em breve....
+* 1.0 - 18/04/2023
+    * Análise SWOT.
+    * Entendimento do negócio.
+    * Canvas Value Proposition.
+    * Personas.
+    * Jornada do Usuário.
+    
+* 1.1 - 26/04/2023
+    * Protótipo Inicial no Simulador Wokwi.
+    * Preenchimento dos Requisitos Funcionais.
+    * Matriz de Risco.
+    * Adição da LGPD.
+    * Bill of Material.
+    
+* 2.0 - 12/05/2023
+    * Protótipo da Interface com o Usuário.
+    * Protótipo Físico (offline).
+    * Preenchimento dos Requisitos Não Funcionais.
+    
+* 3.0 - 28/05/2023
+    * Protótipo com MQTT e I2C.
+    * Arquitetura da Solução.
+    * Testes Realizados.
+    
+* 4.0 - 05/06/2023
+    * Código do Projeto
+    * Projeto Físico (online)
+    * Arquitetura do Protótipo
+    * Manual do Usuário
+    * Possibilidades de Descarte
+    * Início da construção da caixa do rastreador.
+    
+* 5.0 - 23/06/2023
+    * Código Finalizado.
+    * Arquitetura Refinada.
+    * Manual do Usuário Refinado.
+    * Protótipo Final.
+    * Finalização da caixa do rastreador.
 
 ## 📋 Licença/License
 
@@ -41,4 +91,6 @@ Em breve....
 
 Aqui estão as referências usadas no projeto:
 
-1. Em breve....
+1. <https://corporate.pirelli.com/corporate/en-ww/aboutus/pirelli-corporate-culture>.
+2. <https://corporate.pirelli.com/corporate/en-ww/aboutus/history>.
+3. <https://www.pirelli.com/tyres/pt-br/carro/sobre-nos/por-que-pirelli>.
